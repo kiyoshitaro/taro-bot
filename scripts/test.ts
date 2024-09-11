@@ -10,7 +10,7 @@ import axios from 'axios';
       // "thread_id": "a5893820-fe2d-48a9-8f56-33ac89e8207d",
       // "blog_id": "9f005298-0593-43e5-a3cd-962a8ac694ed",
     },
-    url: 'http://localhost:8021/assistant/conversation',
+    url: 'http://localhost:8010/assistant/conversation',
     responseType: 'stream',
     headers: {
       Accept: '*/*',

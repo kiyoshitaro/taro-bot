@@ -29,8 +29,7 @@ export class QuoteRepository extends Repository<QuoteEntity> {
       CREATE TABLE IF NOT EXISTS ${this.metadata.tableName} (
         "id" UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
         embedding VECTOR,
-        "pageContent" TEXT,
-        metadata JSONB
+        "pageContent" TEXT
       );
     `;
       await this.query('CREATE EXTENSION IF NOT EXISTS "uuid-ossp"');

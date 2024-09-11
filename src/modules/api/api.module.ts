@@ -1,6 +1,6 @@
 import { Module, OnApplicationBootstrap } from '@nestjs/common';
 import { DatabaseModule } from '@/database';
-import { HealthController } from '@/api/controllers';
+import { AssistantController, HealthController } from '@/api/controllers';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { QueueModule } from '@/queue/queue.module';
@@ -12,7 +12,7 @@ import { CacheModule, CacheStore } from '@nestjs/cache-manager';
 import { configAuth } from './configs/auth';
 import { configCache } from './configs/cache';
 import { FormatResponseInterceptor } from './interceptors';
-import { VectorStoreModule } from '@/vectorstore-db/vector-store.module';
+import { AiModule } from '@/ai/ai.module';
 @Module({
   imports: [
     ThrottlerModule.forRoot({
@@ -20,7 +20,7 @@ import { VectorStoreModule } from '@/vectorstore-db/vector-store.module';
       limit: process.env.APP_ENV === 'production' ? 60 : 600,
     }),
     DatabaseModule,
-    VectorStoreModule,
+    AiModule,
     QueueModule,
     CacheModule.registerAsync({
       imports: [ConfigModule],
@@ -49,7 +49,7 @@ import { VectorStoreModule } from '@/vectorstore-db/vector-store.module';
       inject: [ConfigService],
     }),
   ],
-  controllers: [HealthController],
+  controllers: [HealthController, AssistantController],
   providers: [
     {
       provide: APP_GUARD,
