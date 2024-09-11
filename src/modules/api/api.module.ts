@@ -12,6 +12,7 @@ import { CacheModule, CacheStore } from '@nestjs/cache-manager';
 import { configAuth } from './configs/auth';
 import { configCache } from './configs/cache';
 import { FormatResponseInterceptor } from './interceptors';
+import { VectorStoreModule } from '@/vectorstore-db/vector-store.module';
 @Module({
   imports: [
     ThrottlerModule.forRoot({
@@ -19,6 +20,7 @@ import { FormatResponseInterceptor } from './interceptors';
       limit: process.env.APP_ENV === 'production' ? 60 : 600,
     }),
     DatabaseModule,
+    VectorStoreModule,
     QueueModule,
     CacheModule.registerAsync({
       imports: [ConfigModule],

@@ -27,6 +27,7 @@
       "@/shared/*": ["shared/*"],
       "@/worker/*": ["modules/worker/*"],
       "@/queue/*": ["modules/queue/*"],
+      "@/vectorstore-db/*": ["modules/vectorstore-db/*"],
       "@/sentry/*": ["modules/sentry//*"]
     }
   },
