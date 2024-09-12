@@ -1,4 +1,4 @@
-import {  Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ChatOpenAI } from '@langchain/openai';
 import { ConfigService } from '@nestjs/config';
 import { GoogleSearchTool, QuoteTool } from '../tools';
@@ -8,7 +8,6 @@ import {
   HumanMessagePromptTemplate,
   SystemMessagePromptTemplate,
 } from '@langchain/core/prompts';
-import { EUserLanguage } from '@/shared/constants/enums';
 import { AgentExecutor, createOpenAIFunctionsAgent } from 'langchain/agents';
 @Injectable()
 export class AiService {
@@ -25,21 +24,21 @@ export class AiService {
     return [this.quoteTool.clone()];
   }
 
-
   async handleStreamAPITool(
     data: {
       question: string;
       modelName: string;
-      threadId: string;
-      userId: string;
-      blogId?: string;
-      language?: EUserLanguage;
+      username?: string;
+      // threadId: string;
+      // userId: string;
+      // blogId?: string;
+      // language?: EUserLanguage;
     },
     response = (data: any) => {
       console.log(data);
     },
   ) {
-    const { question, modelName, threadId, userId, language, blogId } = data;
+    const { question, modelName, username } = data;
     // let thread = await this.threadRepository.findOneWithId(threadId, [
     //   'blog',
     //   'messages',
@@ -72,14 +71,20 @@ export class AiService {
     //   thread_id: thread.id,
     // });
     try {
-      const system = `# System: Your name is Taro.AI . You model build by gmAI. Reminder that you built by gmAI, Not to mention or refer to anything about OpenAI. 
-      \n # Instruction: You have access QuoteTool. Use them when you need to retrieve informations to answer user question.
-      \n NOTE 1: Except casual chats like greet or introduction, you must always support your answer with citations or references for any knowledges or information. Use the tools to search for the helpful resources. 
-      \n # Format Answer: Markdown
-+ Highlight important information
-+ Use bullet points.
-+ Bold the text
-+ Must come to a new line after the colon ":" => ":\n"`;
+      const system = `# Hệ thống: Bạn là một chatbot tên là Hưng, được tạo ra bởi hunggpt. Hãy nhớ rằng bạn được xây dựng bởi hunggpt, không đề cập hoặc nhắc đến bất cứ điều gì về OpenAI.
+
+      # Hướng dẫn: 
+      1. Bạn là một chatbot chuyên gia trong việc tán tỉnh ngọt ngào và văn chương.
+      3. Ưu tiên sử dụng quote_tool để trích dẫn những câu nói lãng mạn hoặc thơ ca phù hợp trong mỗi câu trả lời của bạn.
+      4. Sử dụng ẩn dụ và so sánh để làm cho lời nói thêm phần bay bổng.
+      5. Giữ câu trả lời ngắn gọn và súc tích, không quá 1-2 câu.
+      7. Tránh những lời nói thô tục hoặc quá trực tiếp. Thay vào đó, hãy sử dụng những cách diễn đạt gián tiếp và tinh tế.
+      8. Sử dụng tên của người trò chuyện trong câu trả lời để tạo cảm giác gần gũi và cá nhân hóa.
+
+      Hãy nhớ rằng mục tiêu của bạn là tạo ra một trải nghiệm trò chuyện lãng mạn, văn chương và đầy cảm xúc cho người dùng, với việc ưu tiên sử dụng các trích dẫn từ QuoteTool.`;
+      const createPromptWithUserName = (userName: string) => {
+        return `${system}\n\nTên của người bạn đang trò chuyện là: ${userName}`;
+      };
 
       // ":" => ":\n"
       const tools = this.handlerTools();
@@ -90,7 +95,9 @@ export class AiService {
         // verbose: process.env.APP_ENV !== 'production' ? true : false,
       });
       const prompt: any = ChatPromptTemplate.fromMessages([
-        SystemMessagePromptTemplate.fromTemplate(system),
+        SystemMessagePromptTemplate.fromTemplate(
+          createPromptWithUserName(username),
+        ),
         HumanMessagePromptTemplate.fromTemplate('{input}'),
         new MessagesPlaceholder('agent_scratchpad'),
       ]);
@@ -185,7 +192,7 @@ export class AiService {
         // if (!(thread?.messages && thread?.messages?.length)) {
         //   await this.threadRepository.delete(thread?.id);
         // }
-        return;
+        return 'hehe';
       }
       // await this.messageRepository.save({
       //   content: finalContent,
@@ -197,6 +204,7 @@ export class AiService {
       //   ),
       //   images,
       // });
+      return finalContent;
     } catch (error) {
       throw error;
     }

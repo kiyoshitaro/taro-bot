@@ -2,7 +2,10 @@ import { DataSource, Repository } from 'typeorm';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { Document } from '@langchain/core/documents';
 import { ConfigService } from '@nestjs/config';
-import { TypeORMVectorStore, TypeORMVectorStoreArgs } from '@langchain/community/vectorstores/typeorm';
+import {
+  TypeORMVectorStore,
+  TypeORMVectorStoreArgs,
+} from '@langchain/community/vectorstores/typeorm';
 import { OpenAIEmbeddings } from '@langchain/openai';
 import { Inject } from '@nestjs/common';
 import { EmbeddingsInterface } from '@langchain/core/embeddings';
@@ -29,7 +32,8 @@ export class QuoteRepository extends Repository<QuoteEntity> {
       CREATE TABLE IF NOT EXISTS ${this.metadata.tableName} (
         "id" UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
         embedding VECTOR,
-        "pageContent" TEXT
+        "pageContent" TEXT,
+        metadata JSONB
       );
     `;
       await this.query('CREATE EXTENSION IF NOT EXISTS "uuid-ossp"');
@@ -42,8 +46,7 @@ export class QuoteRepository extends Repository<QuoteEntity> {
 
   async queryVector(query: number[], k: number = 10) {
     const embeddingString = `[${query.join(',')}]`;
-    const documents = await this
-      .createQueryBuilder('document')
+    const documents = await this.createQueryBuilder('document')
       .select('*')
       .addSelect(`embedding <=> '${embeddingString}' as "_distance"`)
       .orderBy('_distance', 'ASC')
@@ -60,7 +63,11 @@ export class QuoteRepository extends Repository<QuoteEntity> {
     return results;
   }
 
-  static async fromTexts(texts: string[], embeddings: EmbeddingsInterface, dbConfig: TypeORMVectorStoreArgs): Promise<TypeORMVectorStore> {
+  static async fromTexts(
+    texts: string[],
+    embeddings: EmbeddingsInterface,
+    dbConfig: TypeORMVectorStoreArgs,
+  ): Promise<TypeORMVectorStore> {
     const docs = [];
     for (let i = 0; i < texts.length; i += 1) {
       const newDoc = new Document({
@@ -73,7 +80,7 @@ export class QuoteRepository extends Repository<QuoteEntity> {
 
   async addVectors(vectors: number[][], documents: Document[]): Promise<void> {
     const rows: any[] = vectors.map((embedding, idx) => {
-      const embeddingString = `[${embedding.join(",")}]`;
+      const embeddingString = `[${embedding.join(',')}]`;
       const documentRow = {
         pageContent: documents[idx].pageContent,
         embedding: embeddingString,
@@ -85,8 +92,7 @@ export class QuoteRepository extends Repository<QuoteEntity> {
       const chunk = rows.slice(i, i + chunkSize);
       try {
         await this.save(chunk);
-      }
-      catch (e) {
+      } catch (e) {
         console.error(e);
         throw new Error(`Error inserting: ${chunk[0].pageContent}`);
       }
@@ -95,9 +101,11 @@ export class QuoteRepository extends Repository<QuoteEntity> {
 
   async addDocuments(documents: any[]) {
     const texts = documents.map(({ pageContent }) => pageContent);
-    return this.addVectors(await this.embeddingModel.embedDocuments(texts), documents);
+    return this.addVectors(
+      await this.embeddingModel.embedDocuments(texts),
+      documents,
+    );
   }
-
 
   async findById(id: string) {
     return this.createQueryBuilder('document')

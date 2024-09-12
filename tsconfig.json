@@ -29,7 +29,7 @@
       "@/queue/*": ["modules/queue/*"],
       "@/vectorstore-db/*": ["modules/vectorstore-db/*"],
       "@/ai/*": ["modules/ai/*"],
-      "@/sentry/*": ["modules/sentry//*"]
+      "@/telegram/*": ["modules/telegram/*"],
     }
   },
   "include": ["src"]

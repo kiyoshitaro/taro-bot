@@ -1,24 +1,15 @@
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import {
-  Body,
-  Controller,
-  Post,
-  Response,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Post, Response, UseGuards } from '@nestjs/common';
 import { AiService } from '@/ai/services/ai.service';
 import { CurrentUser } from '@/shared/decorators/user.decorator';
 import { TJWTPayload } from '@/shared/types';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { AssistantDTO } from '../dtos/assistant.dto';
 
-
 @ApiTags('Assistant')
 @Controller('assistant')
 export class AssistantController {
-  constructor(
-    private readonly aiService: AiService,
-  ) {}
+  constructor(private readonly aiService: AiService) {}
 
   @Post('conversation')
   @ApiOperation({ summary: 'conversation assistant' })

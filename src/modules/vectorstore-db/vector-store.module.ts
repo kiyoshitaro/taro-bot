@@ -41,12 +41,9 @@ import { QuoteRepository } from './repositories/quote.repository';
       },
       inject: [ConfigService],
     },
-    QuoteRepository
-  ],
-  exports: [
     QuoteRepository,
-    'TEXT_EMBEDDING_3_LARGE',
   ],
+  exports: [QuoteRepository, 'TEXT_EMBEDDING_3_LARGE'],
 })
 export class VectorStoreModule implements OnApplicationBootstrap {
   constructor(
@@ -54,10 +51,14 @@ export class VectorStoreModule implements OnApplicationBootstrap {
     public embeddingModel: OpenAIEmbeddings,
     private quoteRepository: QuoteRepository,
     // private quoteDBRepository: QuoteDBRepository,
-  ) { }
+  ) {}
   async onApplicationBootstrap() {
-    const t = await this.quoteRepository.queryOrmVector('Mục đích chiến đấu', 2, true);
-    console.log(t)
+    // const t = await this.quoteRepository.queryOrmVector(
+    //   'Mục đích chiến đấu',
+    //   2,
+    //   true,
+    // );
+    // console.log(t);
     // const quotes = await this.quoteDBRepository.find({select: ['id','content']});
     // console.log(quotes)
     // const batchSize = 50; // Adjust this value based on your needs

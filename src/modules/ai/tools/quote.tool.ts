@@ -13,10 +13,9 @@ export class QuoteTool extends BaseTool {
   // schema = z.object({}) as any;
 
   name = 'quote_tool';
-  description = `A quote tool. useful for when you need to answer questions with quote. input should be a search query. outputs a JSON array of results.`;
+  description = `Công cụ quote_tool. Hữu ích khi bạn cần trả lời câu hỏi bằng các trích dẫn. Đầu vào nên là một câu truy vấn tìm kiếm. Đầu ra là một mảng JSON chứa các kết quả.`;
   instruction = '';
-  constructor(
-  ) {
+  constructor() {
     super();
   }
 
@@ -30,11 +29,10 @@ export class QuoteTool extends BaseTool {
   ): Promise<{ content: string }[]> {
     try {
       const t = await this.quoteRepository.queryOrmVector(input, take, true);
-      return t.map((quote) => ({content: quote.pageContent}));
+      return t.map((quote) => ({ content: quote.pageContent }));
     } catch (error) {
       console.log('🚀 ~ AiService ~ getQuoteInfo ~ error:', error);
       return [];
     }
   }
 }
- 
