@@ -78,5 +78,7 @@ export class TelegramBot {
     if (userInputHandler) {
       this.userReply(this.handlers[COMMAND_KEYS.USER_INPUT].handler);
     }
+    // const res = await this.bot.getChat('5328129068');
+    // console.log(res);
   }
 }

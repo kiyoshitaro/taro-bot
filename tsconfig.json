@@ -30,6 +30,7 @@
       "@/vectorstore-db/*": ["modules/vectorstore-db/*"],
       "@/ai/*": ["modules/ai/*"],
       "@/telegram/*": ["modules/telegram/*"],
+      "@/milvus-db/*": ["modules/milvus-db/*"]
     }
   },
   "include": ["src"]

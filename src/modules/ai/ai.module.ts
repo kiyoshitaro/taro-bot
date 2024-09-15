@@ -7,13 +7,15 @@ import { GoogleSearchTool, QuoteTool } from './tools';
 import { ChatOpenAI, OpenAIEmbeddings } from '@langchain/openai';
 import { TChatModel, TTextEmbedding } from './ai.types';
 import { VectorStoreModule } from '@/vectorstore-db/vector-store.module';
+import { MilvusModule } from '@/milvus-db/milvus.module';
 
-const tools = [ GoogleSearchTool, QuoteTool];
+const tools = [GoogleSearchTool, QuoteTool];
 
 @Module({
   imports: [
     DatabaseModule,
     VectorStoreModule,
+    MilvusModule,
     ConfigModule.forRoot({
       isGlobal: true,
       expandVariables: true,
@@ -79,17 +81,10 @@ const tools = [ GoogleSearchTool, QuoteTool];
       inject: [ConfigService],
     },
   ],
-  exports: [
-    AiService,
-    ...tools,
-    'TEXT_EMBEDDING',
-    'CHAT_OPENAI',
-  ],
+  exports: [AiService, ...tools, 'TEXT_EMBEDDING', 'CHAT_OPENAI'],
 })
 export class AiModule implements OnApplicationBootstrap {
-  constructor(
-    private aiService: AiService,
-  ) {}
+  constructor(private aiService: AiService) {}
 
   async onApplicationBootstrap() {
     // const t = await this.aiService.getGoogleInfo('what is bitcoin');
